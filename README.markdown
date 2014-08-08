@@ -20,7 +20,7 @@ The values shown below under the Optional comment will be set to the values you 
 		public $feedSource = array(
 
 			/** Required **/
-			'datasource' => 'Rss.Rss',
+			'datasource' => 'Rss.RssSource',
 			'database' => false,
 
 			/** Optional **/

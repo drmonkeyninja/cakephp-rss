@@ -1,13 +1,12 @@
 ## Installation
 
-	cd your_app_name/Plugin/
-	git clone git@github.com:loadsys/CakePHP-RSS-Datasource.git Rss
+This plugin can be installed using Composer:-
 
-You may optionally want to add it as a submodule instead of the clone command above.
+	composer require drmonkeyninja/cakephp-rss
 
-	git submodule add git@github.com:loadsys/CakePHP-RSS-Datasource.git Rss
+Alternatively copy the plugin to your app/Plugin directory and rename the plugin's directory 'Rss'.
 
-Also, add the following line to your bootstrap.php.
+Then add the following line to your bootstrap.php to load the plugin.
 
 	CakePlugin::load('Rss');
 

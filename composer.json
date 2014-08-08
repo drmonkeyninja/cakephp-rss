@@ -1,0 +1,21 @@
+{
+    "name": "drmonkeyninja/cakephp-rss",
+    "description": "CakePHP RSS datasource",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "datasource", "rss"],
+    "homepage": "https://github.com/drmonkeyninja/cakephp-rss",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andy Carter",
+            "role": "Author"
+        },
+        {
+            "name": "loadsys",
+            "role": "Author"
+        }
+    ],
+    "extra": {
+        "installer-name": "Rss"
+    }
+}

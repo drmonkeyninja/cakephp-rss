@@ -20,7 +20,7 @@
 
 App::uses('Xml',  'Utility');
 
-class Rss extends DataSource {
+class RssSource extends DataSource {
 
 	/**
 	 * Default configuration options

@@ -29,33 +29,24 @@ The values shown below under the Optional comment will be set to the values you 
 			'cacheTime' => '+1 day',
 		);
 	}
-	?>
 
 Inside of each model that will consume an RSS feed, change the $useDbConfig property to the appropriate feed property from the database.php file. If you are instead using a single database config property, you would set the feed url in the model. The public $feedUrl is read before a read, and takes priority over the feedUrl set in the database config property.
 
 	<?php
-	//  app/models/feed.php
+	//  app/Model/Feed.php
 	class Feed extends AppModel {
-		public $name = 'Feed';
 		public $useDbConfig = 'feedSource';
 		/** Optional **/
 		public $feedUrl = 'http://feedUrl';
 	}
-	?>
 
 Then in your controller that uses the model, simply use the $this->Model->find('all');
 
 	<?php
-	//  app/controllers/feeds_controller.php
+	//  app/Controller/FeedsController.php
 	class FeedsController extends AppController {
-		public $uses = array('Feed');
 		public function index() {
-			$feeds = $this->Feed->find('all');
-			$this->set(compact('feeds'));
+			$this->set('feeds', $this->Feed->find('all'));
+			return;
 		}
 	}
-	?>
-
-## Reference
-
-Original blog post: http://blog.loadsys.com/2009/06/19/cakephp-rss-feed-datasource/

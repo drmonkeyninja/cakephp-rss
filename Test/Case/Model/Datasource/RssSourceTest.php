@@ -27,25 +27,22 @@ class RssModel extends CakeTestModel {
  * Name of Model
  *
  * @var string
- * @access public
  */
-	var $name = 'RssModel';
+	public $name = 'RssModel';
 
 /**
  * Database Configuration
  *
  * @var string
- * @access public
  */
-	var $useDbConfig = 'test_rss';
+	public $useDbConfig = 'test_rss';
 
 /**
  * Set recursive
  *
- * @var integer
- * @access public
+ * @var int
  */
-	var $recursive = -1;
+	public $recursive = -1;
 }
 
 /**
@@ -58,17 +55,15 @@ class RssSourceTest extends CakeTestCase {
  * Rss Source Instance
  *
  * @var RssSource
- * @access public
  */
-	var $Model = null;
+	public $Model = null;
 
-	var $channelAppend = array();
+	public $channelAppend = array();
 
 /**
  * Set up for Tests
  *
  * @return void
- * @access public
  */
 	public function setUp() {
 		parent::setUp();
@@ -86,7 +81,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindAll
  *
  * @return void
- * @access public
  */
 	public function testFindAll() {
 		$result = $this->Model->find('all');
@@ -103,7 +97,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindLimit
  *
  * @return void
- * @access public
  */
 	public function testFindLimit() {
 		$result = $this->Model->find('all', array('limit' => 1));
@@ -125,7 +118,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindOrder
  *
  * @return void
- * @access public
  */
 	public function testFindOrder() {
 		$result = $this->Model->find('all', array('order' => array('RssModel.title' => 'desc')));
@@ -142,7 +134,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindConditions
  *
  * @return void
- * @access public
  */
 	public function testFindConditions() {
 		$result = $this->Model->find('all', array('conditions' => array('RssModel.title' => 'ATest1')));
@@ -163,12 +154,11 @@ class RssSourceTest extends CakeTestCase {
 		return;
 	}
 
-// /**
-//  * testFindconditionsRecursive
-//  *
-//  * @return void
-//  * @access public
-//  */
+/**
+ * testFindconditionsRecursive
+ *
+ * @return void
+ */
 	public function testFindConditionsRecursive() {
 		$result = $this->Model->find('all', array('conditions' => array('AND' => array('RssModel.title' => 'ATest1', 'RssModel.description' => 'BTest2'))));
 		$expected = array();
@@ -195,7 +185,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindFirst
  *
  * @return void
- * @access public
  */
 	public function testFindFirst() {
 		$result = $this->Model->find('first');
@@ -213,7 +202,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindCount
  *
  * @return void
- * @access public
  */
 	public function testFindCount() {
 		$result = $this->Model->find('count');
@@ -235,7 +223,6 @@ class RssSourceTest extends CakeTestCase {
  * testFindList
  *
  * @return void
- * @access public
  */
 	public function testFindList() {
 		$this->Model->primaryKey = 'title';

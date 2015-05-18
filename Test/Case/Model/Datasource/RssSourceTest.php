@@ -164,6 +164,13 @@ class RssSourceTest extends CakeTestCase {
 		$expected = array();
 		$this->assertIdentical($result, $expected);
 
+		$result = $this->Model->find('all', array('conditions' => array('RssModel.title' => array('ATest1', 'BTest2'))));
+		$expected = array(
+			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+		);
+		$this->assertIdentical($result, $expected);
+
 		$result = $this->Model->find('all', array('conditions' => array('OR' => array('RssModel.title' => array('ATest1', 'BTest2')))));
 		$expected = array(
 			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),

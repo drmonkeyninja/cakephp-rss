@@ -4,58 +4,52 @@
  *
  * Helps reading RSS feeds in CakePHP as if it were a model.
  *
- * PHP versions 4 and 5
- *
+ * PHP versions 5
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2009, Loadsys Consulting, Inc. (http://www.loadsys.com)
- * @version       $1.0$
- * @modifiedby    $LastChangedBy: Joey Trapp (Loadsys) $
- * @lastmodified  $Date: 2010-10-11$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 App::uses('Xml',  'Utility');
 
 class RssSource extends DataSource {
 
-	/**
-	 * Default configuration options
-	 * 
-	 * @var array
-	 * @access public
-	 */
+/**
+ * Default configuration options
+ *
+ * @var array
+ * @access public
+ */
 	public $_baseConfig = array(
 		'feedUrl' => false,
 		'encoding' => 'UTF-8',
 		'cacheTime' => '+1 day',
 		'version' => '2.0',
 	);
-	
+
 	public $cacheSources = false;
-		
-	/**
-	 * Should modify this method to ping or check url to see if it returns a valid
-	 * response.
-	 *
-	 * @return bool
-	 * @access public
-	 */
+
+/**
+ * Should modify this method to ping or check url to see if it returns a valid
+ * response.
+ *
+ * @return bool
+ * @access public
+ */
 	public function isConnected() {
 		return true;
 	}
 
-	/**
-	 * read function.
-	 * 
-	 * @access public
-	 * @param object &$model
-	 * @param array $queryData
-	 * @return array
-	 */
+/**
+ * read function.
+ *
+ * @access public
+ * @param object &$model
+ * @param array $queryData
+ * @return array
+ */
 	public function read(Model $model, $queryData = array(), $recursive = NULL) {
 		if (isset($model->feedUrl) && !empty($model->feedUrl)) {
 			$this->config['feedUrl'] = $model->feedUrl;
@@ -69,14 +63,21 @@ class RssSource extends DataSource {
 
 		$items = Set::extract($data, 'rss.channel.item');
 
-		if ( $items ) {
-			$items = $this->__filterItems($items, $queryData['conditions']);
+		if ($items) {
+			//$items = $this->__filterItems($items, $queryData['conditions']);
+			foreach ($items as $key => $value) {
+				if ($this->_checkConditions($value, $queryData['conditions']) === false) {
+					unset($items[$key]);
+				}
+			}
 
-			$items = $this->__sortItems($model, $items, $queryData['order']);
+			if (!empty($items)) {
+				$items = $this->__sortItems($model, $items, $queryData['order']);
+			}
 
 			//used for pagination
 			$items = $this->__getPage($items, $queryData);
-	
+
 			//return item count
 			if ( Set::extract($queryData, 'fields') == '__count' ) {
 				return array(array($model->alias => array('count' => count($items))));
@@ -97,23 +98,23 @@ class RssSource extends DataSource {
 		return $result;
 	}
 
-	/**
-	 * name function.
-	 * 
-	 * @access public
-	 * @param mixed $name
-	 * @return void
-	 */
+/**
+ * name function.
+ *
+ * @access public
+ * @param mixed $name
+ * @return void
+ */
 	public function name($name) {
 		return $name;
-	}	
+	}
 
-	/**
-	 * __readData function.
-	 * 
-	 * @access public
-	 * @return void
-	 */
+/**
+ * __readData function.
+ *
+ * @access public
+ * @return void
+ */
 	public function __readData() {
 		$config = $this->config;
 		$feedUrl = $config['feedUrl'];
@@ -143,54 +144,64 @@ class RssSource extends DataSource {
 
 		return $data;
 	}
-	
-	/**
-	 * __filterItems function.
-	 * 
-	 * @access public
-	 * @param mixed $items
-	 * @param mixed $conditions
-	 * @return void
-	 */
-	public function __filterItems($items = null, $conditions = null) {
-		if (empty($items) || empty($conditions)) {
-			return $items;
+
+	protected function _checkConditions($record, $conditions) {
+		$result = true;
+		if (empty($conditions)) {
+			return $result;
 		}
-
-		$filteredItems = array();        
-
-		foreach ($items as $item) {
-			foreach ($conditions as $field => $condition) {
-				$itemPassedFilters = $this->__passesCondition($item[$field], $condition);
+		foreach ($conditions as $name => $value) {
+			if (strpos($name, '.') !== false) {
+				list($alias, $name) = explode('.', $name);
 			}
-			
-			if ($itemPassedFilters==true) {
-                				array_push($filteredItems, $item);
+
+			if (strtolower($name) === 'or') {
+				$cond = $value;
+				$result = false;
+				foreach ($cond as $name => $value) {
+					if (strpos($name, '.') !== false) {
+						list($condAlias, $name) = pluginSplit($name);
+					}
+					if (is_array($value)) {
+						foreach ($value as $val) {
+							if (Set::matches($this->_createRule($name, $val), $record)) {
+								$result = true;
+							}
+						}
+					} else {
+						if (Set::matches($this->_createRule($name, $value), $record)) {
+							$result = true;
+						}
+					}
+				}
+			} elseif (strtolower($name) === 'and') {
+				$result = $this->_checkConditions($record, $value);
+			} else {
+				if (Set::matches($this->_createRule($name, $value), $record) === false) {
+					$result = false;
+				}
 			}
-        		}
-		return $filteredItems;
+		}
+		return $result;
 	}
 
-	/**
-	 * __passesCondition function.
-	 * 
-	 * @access public
-	 * @param mixed $field
-	 * @param mixed $condition
-	 * @return void
-	 */
-	public function __passesCondition($field, $condition) {
-        		return preg_match($condition, $field);
+	protected function _createRule($name, $value) {
+		if (is_numeric($name)) {
+			return array($value);
+		} elseif (strpos($name, ' ') !== false) {
+			return array(str_replace(' ', '', $name) . $value);
+		}
+		return array("{$name}={$value}");
 	}
 
-	/**
-	 * __getPage function.
-	 * 
-	 * @access public
-	 * @param mixed $items
-	 * @param array $queryData
-	 * @return void
-	 */
+/**
+ * __getPage function.
+ *
+ * @access public
+ * @param mixed $items
+ * @param array $queryData
+ * @return void
+ */
 	public function __getPage($items = null, $queryData = array()) {
 		if ( empty($queryData['limit']) ) {
 			return $items;
@@ -204,15 +215,15 @@ class RssSource extends DataSource {
 		return array_slice($items, $offset, $limit);
 	}
 
-	/**
-	 * __sortItems function.
-	 * 
-	 * @access public
-	 * @param mixed &$model
-	 * @param mixed $items
-	 * @param mixed $order
-	 * @return void
-	 */
+/**
+ * __sortItems function.
+ *
+ * @access public
+ * @param mixed &$model
+ * @param mixed $items
+ * @param mixed $order
+ * @return void
+ */
 	public function __sortItems(&$model, $items, $order) {
 		if ( empty($order) || empty($order[0]) ) {
 			return $items;
@@ -239,67 +250,68 @@ class RssSource extends DataSource {
 				}
 			}
 			$sorting[] =& $values;
-			
+
 			switch(strtolower($direction)) {
 				case 'asc':
 					$direction = SORT_ASC;
 					break;
 				case 'desc':
 					$direction = SORT_DESC;
-					break;	
+					break;
 				default:
 					trigger_error('Invalid sorting direction '. strtolower($direction));
 			}
-			$sorting[] =& $direction; 
+			$sorting[] =& $direction;
 		}
-		
+
 		$sorting[] =& $items;
 		$sorting[] =& $direction;
 		call_user_func_array('array_multisort', $sorting);
-	
+
 		return $items;
 	}
 
-	/**
-	 * calculate function.
-	 * 
-	 * @access public
-	 * @param mixed &$model
-	 * @param mixed $func
-	 * @param array $params
-	 * @return void
-	 */
+/**
+ * calculate function.
+ *
+ * @access public
+ * @param mixed &$model
+ * @param mixed $func
+ * @param array $params
+ * @return void
+ */
 	public function calculate(&$model, $func, $params = array()) {
 		return '__'.$func;
 	}
-	
-	/**
-	 * This datasource does not support creating rss feeds
-	 * 
-	 * @access public
-	 * @return void
-	 */
+
+/**
+ * This datasource does not support creating rss feeds
+ *
+ * @access public
+ * @return void
+ */
 	public function create(Model $model, $fields = NULL, $values = NULL) {
 		return false;
 	}
-	
-	/**
-	 * This datasource does not support updating rss feeds
-	 * 
-	 * @access public
-	 * @return void
-	 */
+
+/**
+ * This datasource does not support updating rss feeds
+ *
+ * @access public
+ * @return void
+ */
 	public function update(Model $model, $fields = NULL, $values = NULL, $conditions = NULL) {
 		return false;
 	}
-	
-	/**
-	 * This datasource does not support deleting rss feeds
-	 * 
-	 * @access public
-	 * @return void
-	 */
+
+/**
+ * This datasource does not support deleting rss feeds
+ *
+ * @access public
+ * @return void
+ */
 	public function delete(Model $model, $conditions = NULL) {
 		return false;
 	}
+
 }

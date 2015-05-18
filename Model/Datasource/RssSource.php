@@ -170,6 +170,8 @@ class RssSource extends DataSource {
 				}
 			} elseif (strtolower($name) === 'and') {
 				$result = $this->_checkConditions($record, $value);
+			} elseif (strtolower($name) === 'not') {
+				$result = !$this->_checkConditions($record, $value);
 			} else {
 				if (Set::matches($this->_createRule($name, $value), $record) === false) {
 					$result = false;

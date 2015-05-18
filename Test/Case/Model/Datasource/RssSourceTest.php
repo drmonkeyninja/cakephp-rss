@@ -85,8 +85,8 @@ class RssSourceTest extends CakeTestCase {
 	public function testFindAll() {
 		$result = $this->Model->find('all');
 		$expected = array(
-			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
-			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
 		);
 		$this->assertEqual($result, $expected);
 
@@ -101,13 +101,13 @@ class RssSourceTest extends CakeTestCase {
 	public function testFindLimit() {
 		$result = $this->Model->find('all', array('limit' => 1));
 		$expected = array(
-			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Model->find('all', array('limit' => 1, 'page' => 2));
 		$expected = array(
-			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
 		);
 		$this->assertEqual($result, $expected);
 
@@ -122,8 +122,8 @@ class RssSourceTest extends CakeTestCase {
 	public function testFindOrder() {
 		$result = $this->Model->find('all', array('order' => array('RssModel.title' => 'desc')));
 		$expected = array(
-						array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
-						array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+						array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+						array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
 		);
 		$this->assertEqual($result, $expected);
 
@@ -137,14 +137,14 @@ class RssSourceTest extends CakeTestCase {
  */
 	public function testFindConditions() {
 		$result = $this->Model->find('all', array('conditions' => array('RssModel.title' => 'ATest1')));
-		$expected = array(array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)));
+		$expected = array(array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Model->find('all', array('conditions' => array('RssModel.title =' => 'ATest1')));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Model->find('all', array('conditions' => array('RssModel.title !=' => 'ATest1')));
-		$expected = array(array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)));
+		$expected = array(array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Model->find('all', array('conditions' => array('RssModel.title' => 'ATest1', 'RssModel.description' => 'BTest2')));
@@ -166,15 +166,21 @@ class RssSourceTest extends CakeTestCase {
 
 		$result = $this->Model->find('all', array('conditions' => array('OR' => array('RssModel.title' => array('ATest1', 'BTest2')))));
 		$expected = array(
-			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
-			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
 		);
 		$this->assertIdentical($result, $expected);
 
 		$result = $this->Model->find('all', array('conditions' => array('OR' => array('RssModel.title' => 'ATest1', 'RssModel.link' => 'http://www.test2.com'))));
 		$expected = array(
-			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
-			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Model->find('all', array('conditions' => array('NOT' => array('RssModel.title' => 'ATest1'))));
+		$expected = array(
+			array('RssModel' => array('title' => 'BTest2', 'description' => 'BTest2', 'link' => 'http://www.test2.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend)),
 		);
 		$this->assertIdentical($result, $expected);
 
@@ -190,7 +196,7 @@ class RssSourceTest extends CakeTestCase {
 		$result = $this->Model->find('first');
 		$expected = array(
 			'RssModel' => array(
-				'title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate'=>'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend
+				'title' => 'ATest1', 'description' => 'ATest1', 'link' => 'http://www.test1.com', 'pubDate' => 'Tue, 7 Sep 2010 00:01:01 -0500', 'channel' => $this->channelAppend
 			),
 		);
 		$this->assertEqual($result, $expected);

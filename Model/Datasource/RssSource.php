@@ -198,6 +198,10 @@ class RssSource extends DataSource {
  * @return bool
  */
 	protected function _checkRule($name, $value, $record) {
+		if (strpos($name, ' LIKE') !== false) {
+			$name = str_replace(' LIKE', '', $name);
+			return preg_match('~' . str_replace('%', '.?', $value) . '~', $record[$name]) === 1;
+		}
 		return Set::matches($this->_createRule($name, $value), $record);
 	}
 

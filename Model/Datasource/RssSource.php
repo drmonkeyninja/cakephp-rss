@@ -158,12 +158,12 @@ class RssSource extends DataSource {
 					}
 					if (is_array($value)) {
 						foreach ($value as $val) {
-							if (Set::matches($this->_createRule($name, $val), $record)) {
+							if ($this->_checkRule($name, $val, $record) === true) {
 								$result = true;
 							}
 						}
 					} else {
-						if (Set::matches($this->_createRule($name, $value), $record)) {
+						if ($this->_checkRule($name, $value, $record) === true) {
 							$result = true;
 						}
 					}
@@ -177,16 +177,28 @@ class RssSource extends DataSource {
 					// IN() condition
 					$result = false;
 					foreach ($value as $val) {
-						if (Set::matches($this->_createRule($name, $val), $record) === true) {
+						if ($this->_checkRule($name, $val, $record) === true) {
 							$result = true;
 						}
 					}
-				} elseif (Set::matches($this->_createRule($name, $value), $record) === false) {
+				} elseif ($this->_checkRule($name, $value, $record) === false) {
 					$result = false;
 				}
 			}
 		}
 		return $result;
+	}
+
+/**
+ * Checks a specific rule
+ *
+ * @param string $name Rule
+ * @param string $value Rule value
+ * @param string $record
+ * @return bool
+ */
+	protected function _checkRule($name, $value, $record) {
+		return Set::matches($this->_createRule($name, $value), $record);
 	}
 
 	protected function _createRule($name, $value) {

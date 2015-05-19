@@ -12,7 +12,7 @@ ConnectionManager::create(
 	'test_rss',
 	array(
 		'datasource' => 'Rss.RssSource',
-		'feedUrl' => 'http://loadsys1.com/rss_datasource_test.rss',
+		'feedUrl' => 'http://andy-carter.com/cakephp-rss-test-feed.rss',
 		'encoding' => 'UTF-8',
 	)
 );
@@ -70,7 +70,7 @@ class RssSourceTest extends CakeTestCase {
 		$this->Model = ClassRegistry::init('RssModel');
 		$this->channelAppend = array(
 			'title' => 'Test Feed for CakePHP RSS Datasource Unit Test',
-			'link' => 'http://github.com/loadsys/CakePHP-RSS-Datasource',
+			'link' => 'https://github.com/drmonkeyninja/cakephp-rss',
 			'description' => 'Test RSS feed for data source test',
 		);
 

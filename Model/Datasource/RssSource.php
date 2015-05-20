@@ -54,7 +54,7 @@ class RssSource extends DataSource {
 		$data = $this->_readData();
 
 		$channel = Set::extract($data, 'rss.channel');
-		if ( isset($channel['item']) ) {
+		if (isset($channel['item'])) {
 			unset($channel['item']);
 		}
 
@@ -67,9 +67,15 @@ class RssSource extends DataSource {
 				}
 			}
 
+			foreach ($items as $key => $item) {
+				$items[$key]['channel'] = $channel;
+			}
+
 			if (!empty($items)) {
 				$items = $this->_sortItems($model, $items, $queryData['order']);
 			}
+
+			$items = $this->_filterItems($model, $items, $queryData['fields']);
 
 			//used for pagination
 			$items = $this->_getPage($items, $queryData);
@@ -87,7 +93,6 @@ class RssSource extends DataSource {
 		$result = array();
 		if (is_array($items)) {
 			foreach ($items as $item) {
-				$item['channel'] = $channel;
 				$result[] = array($model->alias => $item);
 			}
 		}
@@ -284,6 +289,36 @@ class RssSource extends DataSource {
 		$sorting[] =& $items;
 		$sorting[] =& $direction;
 		call_user_func_array('array_multisort', $sorting);
+
+		return $items;
+	}
+
+/**
+ * Filter fields from query
+ *
+ * @param Model &$model
+ * @param array $items
+ * @param array $fields
+ * @return array
+ */
+	protected function _filterItems(&$model, $items, $fields) {
+		if (empty($fields) || $fields === '__count') {
+			return $items;
+		}
+
+		foreach ($fields as &$field) {
+			if (strpos($field, '.') !== false) {
+				list($alias, $field) = explode('.', $field);
+			}
+		}
+
+		foreach ($items as &$item) {
+			foreach ($item as $key => $value) {
+				if (!in_array($key, $fields)) {
+					unset($item[$key]);
+				}
+			}
+		}
 
 		return $items;
 	}

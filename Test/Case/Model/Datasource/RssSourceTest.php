@@ -237,6 +237,27 @@ class RssSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test fields
+ *
+ * @return void
+ */
+	public function testFindFields() {
+		$result = $this->Model->find(
+			'all',
+			array(
+				'fields' => array('title', 'link')
+			)
+		);
+		$expected = array(
+			array('RssModel' => array('title' => 'ATest1', 'link' => 'http://www.test1.com')),
+			array('RssModel' => array('title' => 'BTest2', 'link' => 'http://www.test2.com')),
+		);
+		$this->assertIdentical($expected, $result);
+
+		return;
+	}
+
+/**
  * testFindList
  *
  * @return void
